@@ -1,0 +1,138 @@
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand">SHOPU</a>
+      <form class="d-flex">
+        <a class="btn btn-outline-success" type="submit" routerLink="/orders" >Orders</a>
+        <button class="btn btn-outline-success" type="submit" data-bs-toggle="modal" data-bs-target="#staticBackdrop" (click)="getActualCart()">CART <i class="fa fa-shopping-cart" aria-hidden="true"></i></button>
+      </form>
+    </div>
+  </nav>
+  <br>
+  <div class="container ">
+    <h2>SHOPU</h2>
+    <br>
+    <div *ngFor="let item of cart" class="card mb-3" style="width: 18rem;">
+      <img src="https://images.unsplash.com/photo-1577401239170-897942555fb3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=928&q=80" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">{{item.item.name}}</h5>
+        <p class="card-text">{{item.item.description}}</p>
+        <p class="card-text">Price: {{item.item.price}}$</p>
+        <button [disabled]="item.quantity===0" href="#" class="btn btn-dark" (click)="addToCart(item);" >AddToCart</button>
+        <input type="number" class="form-control shopInput" [(ngModel)]="item.quantity" min="0">
+        
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">SHOPU CART</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul class="list-group">
+            <li class="list-group-item" *ngFor="let item of actualCart">
+              <span class="li "> Name: {{item.item.name}}</span>
+              <span class="li "> Quantity:  <input type="number" class="form-control" min="0" [(ngModel)]="item.quantity" (change)="setItemInCart(item); getTotal();"></span>
+              <span class="li "> Price:  {{item.item.price}}</span>
+              <span class="li "> Total:  {{item.item.price * item.quantity}}$</span>
+              <button class="btn btn-danger li" (click)="removeItem(item); getTotal(); getActualCart();">Remove</button>
+            </li>
+            <li class="list-group-item" > Total {{this.total}} $</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop1">Go to psy</button>
+        </div>
+      
+      </div>
+    </div>
+  </div>
+  
+  
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static1" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Payment Method</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+           <div class="form-check">
+              <input [(ngModel)]="method" class="form-check-input" value="PAYPAL" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>
+              <label class="form-check-label" for="flexRadioDefault1">
+                Paypal
+              </label>
+            </div>
+            <div class="form-check">
+              <input [(ngModel)]="method" class="form-check-input" value="CREDITCARD" type="radio" name="flexRadioDefault" id="flexRadioDefault2" >
+              <label class="form-check-label" for="flexRadioDefault2">
+                CreditCard
+              </label>
+            </div>
+            <div class="form-check">
+              <input [(ngModel)]="method" class="form-check-input" value="CASH" type="radio" name="flexRadioDefault" id="flexRadioDefault2" >
+              <label class="form-check-label" for="flexRadioDefault2">
+                Cash
+              </label>
+            </div>
+          </div>
+          <hr/>
+          <div class="container mb-2">      
+            <div class="form-group">
+              <label for="exampleInputPassword1">User</label>
+              <input type="text" class="form-control" id="userInput" placeholder="User" [(ngModel)]="user">
+            </div>
+          </div>
+          <div class="container" *ngIf="method==='CREDITCARD'">
+      
+              <div class="form-group  mb-2">
+                <label for="exampleInputEmail1">Card Number</label>
+                <input type="text" class="form-control" id="cardNumberInput" aria-describedby="emailHelp" placeholder="Card Number" [(ngModel)]="cardNumber">
+              </div>
+              <div class="form-group  mb-2">
+                <label for="exampleInputPassword1">Expiration Date</label>
+                <input type="text" class="form-control" id="expiryDateInput" placeholder="Expiry Date mm/yy" [(ngModel)]="expiryDate">
+              </div>
+              <div class="form-group  mb-2">
+                <label for="exampleInputPassword1">CVV</label>
+                <input type="text" class="form-control" id="cvvInput" placeholder="CVV" [(ngModel)]="cvv">
+              </div>
+              <div class="form-group  mb-2">
+                <label for="exampleInputPassword1">Name</label>
+                <input type="text" class="form-control" id="nameInput" placeholder="names" [(ngModel)]="name">
+              </div>
+    
+          </div>
+          <div class="container" *ngIf="method==='PAYPAL'">
+          
+              <div class="form-group  mb-2">
+                <label for="exampleInputEmail1">Email</label>
+                <input [(ngModel)]="email" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+              </div>
+              <div class="form-group  mb-2">
+                <label for="exampleInputPassword1">Password</label>
+                <input [(ngModel)]="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="password">
+              </div>
+    
+        </div>
+        <div class="container" *ngIf="method==='CASH'">
+        </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" (click)="sendOrder()">PAY</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Button trigger modal -->
+
+  
